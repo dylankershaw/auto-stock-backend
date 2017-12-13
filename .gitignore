@@ -14,10 +14,14 @@
 !/tmp/.keep
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Ignore Byebug command history file.
 .byebug_history
 
 config/application.yml
+=======
+.byebug_history
+>>>>>>> parent of 6cc549f... updated gitignore
 =======
 .byebug_history
 >>>>>>> parent of 6cc549f... updated gitignore
