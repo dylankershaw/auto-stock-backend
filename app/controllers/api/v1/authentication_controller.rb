@@ -1,29 +1,34 @@
 class Api::V1::AuthenticationController < ApplicationController
 
   def create
-    # byebug
     user = User.find_by(username: params[:username])
     if user && user.authenticate(params[:password])
-      render json: {
+        render json: {
         id: user.id,
         username: user.username,
-        token: JWT.encode({user_id: user.id}, ENV['JWT_SECRET'], ENV['JWT_ALGORITHM'])
+        token: JWT.encode({user_id: user.id, user_username: user.username}, ENV['JWT_SECRET'], ENV['JWT_ALGORITHM'])
       }
     else
-      render json: {error: 'User not found'}, status: 404
+      render json: {error: 'User not found'}, status: 401
     end
   end
 
-#   def show
-#     if current_user
-#       render json: {
-#         id: current_user.id,
-#         username: current_user.username
-#       }
-#     else
-#       render json: {error: 'No id present on headers'}, status: 404
-#     end
-#   end
+  # called on componentDidMount
+#   def fetch current user(token)
+#     decode token
+
+  def show
+    current_user = JWT.decode(params["token"], ENV['JWT_SECRET'], ENV['JWT_ALGORITHM'])
+
+    if current_user
+      render json: {
+        id: current_user[0]["user_id"],
+        username: current_user[0]["user_username"]
+      }
+    else
+      render json: {error: 'invalid token'}, status: 401
+    end
+  end
 
 
 end
