@@ -5,7 +5,7 @@ Rails.application.routes.draw do
       resources :users, only: :show
       resources :images, only: :show
       resources :labels, only: :show
-      resources :imageLabels, only: :show
+      resources :image_labels, only: :show
     end
   end
 end
