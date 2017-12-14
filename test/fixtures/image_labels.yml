@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  imageId: 1
+  labelId: 1
+  relevancyScore: 1.5
+
+two:
+  imageId: 1
+  labelId: 1
+  relevancyScore: 1.5

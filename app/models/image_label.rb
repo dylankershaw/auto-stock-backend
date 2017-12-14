@@ -1,0 +1,2 @@
+class ImageLabel < ApplicationRecord
+end
