@@ -26,7 +26,7 @@ class Api::V1::AuthenticationController < ApplicationController
         username: current_user[0]["user_username"]
       }
     else
-      render json: {error: 'invalid token'}, status: 401
+        render json: {error: 'invalid token'}, status: 401
     end
   end
 
