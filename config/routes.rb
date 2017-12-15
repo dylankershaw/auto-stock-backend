@@ -4,7 +4,6 @@ Rails.application.routes.draw do
     namespace :v1 do
       post '/login', to: "authentication#create"
       post '/authenticate', to: "authentication#show"
-      # get '/authenticate', to: "authentication#show"
       resources :users, only: [:show, :create]
       resources :image_labels, only: [:show, :create]
       resources :images, only: [:show, :create]
