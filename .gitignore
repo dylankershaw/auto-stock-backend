@@ -17,3 +17,4 @@
 .byebug_history
 # Ignore application configuration
 /config/application.yml
+/config/google_cloud_credentials.json

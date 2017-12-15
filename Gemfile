@@ -45,3 +45,5 @@ gem 'pry'
 gem 'jwt'
 gem 'figaro'
 gem 'unsplash'
+gem 'google-cloud-storage'
+gem "mini_magick"
