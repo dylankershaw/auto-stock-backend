@@ -10,7 +10,6 @@ class Api::V1::ImagesController < ApplicationController
     end
 
     def create
-
         # extracts file information
         uploaded_io = params["image_io"]["base64"]
         metadata = uploaded_io.split(',/')[0] + ","
@@ -38,30 +37,31 @@ class Api::V1::ImagesController < ApplicationController
         file = bucket.file filename
         file.acl.public!
 
-        new_image = Image.create
-        new_image.url = "https://storage.googleapis.com/#{bucket_name}/#{filename}"
+        # creates image and associates it with user
+        new_image = Image.create(url: "https://storage.googleapis.com/#{bucket_name}/#{filename}")
+        user = User.find(params["userId"])
+        user.images << new_image
         
         # initializes google vision session
         vision = Google::Cloud::Vision.new(
-            project_id: ENV['GOOGLE_CLOUD_PROJECT'],
             credentials: JSON.parse(File.read('config/google_cloud_credentials.json'))
             #### NEED TO MAKE THIS REFERENCE AN ENV VAR; WON'T WORK ON HEROKU
         )
 
+        # sends image to google cloud vision for label assignment
         gcv_image = vision.image "gs://#{bucket_name}/#{filename}"
 
+        # associates each label with the image
         gcv_image.labels.each do |gcv_label|
             label = Label.find_or_create_by(name: gcv_label.description)
-            byebug
-
-            image_label = ImageLabel.new(imageId: new_image.id, labelId: label.id, relevancyScore: gcv_label.score)
-
-            # label.save
+            image_label = ImageLabel.create(
+                image_id: new_image.id,
+                label_id: label.id,
+                relevancyScore: gcv_label.score
+            )
         end
-        # new_image.save
-        # user = User.find(params["userId"])
-        # user.images << new_image
-        # user.save
+
         # render json: new_image
+        render :json => new_image.to_json(:include => [:labels])
     end
 end

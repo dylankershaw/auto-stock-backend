@@ -10,14 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171214184627) do
+ActiveRecord::Schema.define(version: 20171218190048) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "image_labels", force: :cascade do |t|
-    t.integer "imageId"
-    t.integer "labelId"
+    t.integer "image_id"
+    t.integer "label_id"
     t.float "relevancyScore"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -25,8 +25,7 @@ ActiveRecord::Schema.define(version: 20171214184627) do
 
   create_table "images", force: :cascade do |t|
     t.text "url"
-    t.string "userId"
-    t.string "integer"
+    t.string "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
