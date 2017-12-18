@@ -10,15 +10,15 @@ class Api::V1::ImagesController < ApplicationController
 
     def create
         # convert from base64 to image file - paperclip?
-        byebug
         uploaded_io = params["image_io"]["base64"]
         metadata = uploaded_io.split(',/')[0] + ","
+        filetype = metadata.split("/")[1].split("base64")[0][0...-1]
         base64_string = uploaded_io[metadata.size..-1]
-        # blob = Base64.decode64(params["image_io"]["base64"])
-        # image = MiniMagick::Image.read(blob)
-        # image.write `#{Time.new.to_i}.jpg`
+        blob = Base64.decode64(base64_string)
+        image = MiniMagick::Image.read(blob)
+        filename = "#{Time.new.to_i}.#{filetype}"
+        image.write filename
         
-
         storage = Google::Cloud::Storage.new(
             project_id: ENV['GOOGLE_CLOUD_PROJECT'],
             
@@ -27,10 +27,11 @@ class Api::V1::ImagesController < ApplicationController
             #### watch youtube video; use carrierwave?
             credentials: JSON.parse(File.read('config/google_cloud_credentials.json'))
         )
-
+        
         bucket = storage.bucket "auto-stock-189103.appspot.com"
-        bucket.create_file params["image"],`test/#{Time.new.to_i}.jpg`
-            
+        byebug 
+        bucket.create_file image, "test/#{filename}" #*** TypeError Exception: no implicit conversion of MiniMagick::Image into String
+        
 
         # image = Image.new
         # image.url = (upload to google cloud)
