@@ -51,8 +51,8 @@ class Api::V1::ImagesController < ApplicationController
         # sends image to google cloud vision for label assignment
         gcv_image = vision.image "gs://#{bucket_name}/#{filename}"
 
-        # associates each label with the image
-        gcv_image.labels.each do |gcv_label|
+        # associates first five labels with the image
+        gcv_image.labels[0...5].each do |gcv_label|
             label = Label.find_or_create_by(name: gcv_label.description)
             image_label = ImageLabel.create(
                 image_id: new_image.id,
@@ -61,7 +61,6 @@ class Api::V1::ImagesController < ApplicationController
             )
         end
 
-        # render json: new_image
-        render :json => new_image.to_json(:include => [:labels])
+        render :json => new_image.to_json(:include => [:labels, :imageLabels])
     end
 end
