@@ -1,5 +1,6 @@
 
 require "google/cloud/storage"
+require "google/cloud/vision"
 require 'base64'
 
 class Api::V1::ImagesController < ApplicationController
@@ -31,20 +32,32 @@ class Api::V1::ImagesController < ApplicationController
         # initializes google cloud storage bucket and uploads image
         bucket_name = "auto-stock-189103.appspot.com"
         bucket = storage.bucket bucket_name
-        bucket.create_file image.tempfile.path, filename
+        gcs_image = bucket.create_file image.tempfile.path, filename
 
         # assigns public permission to file
         file = bucket.file filename
         file.acl.public!
 
-        new_image = Image.new
+        new_image = Image.create
         new_image.url = "https://storage.googleapis.com/#{bucket_name}/#{filename}"
-        byebug
-        # labels = (send to google vision for labels)
-        # labels.each do |label|
-            # new_label = Label.find_or_create
-            # new_image.labels << new_label
-            # end
+        
+        # initializes google vision session
+        vision = Google::Cloud::Vision.new(
+            project_id: ENV['GOOGLE_CLOUD_PROJECT'],
+            credentials: JSON.parse(File.read('config/google_cloud_credentials.json'))
+            #### NEED TO MAKE THIS REFERENCE AN ENV VAR; WON'T WORK ON HEROKU
+        )
+
+        gcv_image = vision.image "gs://#{bucket_name}/#{filename}"
+
+        gcv_image.labels.each do |gcv_label|
+            label = Label.find_or_create_by(name: gcv_label.description)
+            byebug
+
+            image_label = ImageLabel.new(imageId: new_image.id, labelId: label.id, relevancyScore: gcv_label.score)
+
+            # label.save
+        end
         # new_image.save
         # user = User.find(params["userId"])
         # user.images << new_image
