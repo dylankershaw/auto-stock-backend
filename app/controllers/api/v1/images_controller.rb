@@ -37,7 +37,7 @@ class Api::V1::ImagesController < ApplicationController
         file = bucket.file filename
         file.acl.public!
 
-        # creates image and associates it with user
+        # creates image and associates it with user who uploaded it
         new_image = Image.create(url: "https://storage.googleapis.com/#{bucket_name}/#{filename}")
         user = User.find(params["userId"])
         user.images << new_image
