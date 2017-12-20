@@ -25,7 +25,6 @@ class Api::V1::ImagesController < ApplicationController
         storage = Google::Cloud::Storage.new(
             project_id: ENV['GOOGLE_CLOUD_PROJECT'],
             credentials: JSON.parse(File.read('config/google_cloud_credentials.json'))
-            #### NEED TO MAKE THIS REFERENCE AN ENV VAR; WON'T WORK ON HEROKU
         )
         
         # initializes google cloud storage bucket and uploads image
@@ -45,13 +44,12 @@ class Api::V1::ImagesController < ApplicationController
         # initializes google vision session
         vision = Google::Cloud::Vision.new(
             credentials: JSON.parse(File.read('config/google_cloud_credentials.json'))
-            #### NEED TO MAKE THIS REFERENCE AN ENV VAR; WON'T WORK ON HEROKU
         )
 
         # sends image to google cloud vision for label assignment
         gcv_image = vision.image "gs://#{bucket_name}/#{filename}"
 
-        # associates labels with the image
+        # associates labels with image
         gcv_image.labels.each do |gcv_label|
             label = Label.find_or_create_by(name: gcv_label.description)
             image_label = ImageLabel.create(
