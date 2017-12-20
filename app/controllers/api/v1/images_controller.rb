@@ -6,7 +6,7 @@ require 'base64'
 class Api::V1::ImagesController < ApplicationController
     def show
         image = Image.find(params[:id])
-        render json: user
+        render :json => image.to_json(:include => [:labels, :imageLabels, :user])
     end
 
     def create
