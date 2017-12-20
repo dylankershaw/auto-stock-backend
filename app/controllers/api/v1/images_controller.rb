@@ -61,6 +61,6 @@ class Api::V1::ImagesController < ApplicationController
             )
         end
 
-        render :json => new_image.to_json(:include => [:labels, :imageLabels])
+        render :json => new_image.to_json(:include => [:labels, :imageLabels, :user])
     end
 end
