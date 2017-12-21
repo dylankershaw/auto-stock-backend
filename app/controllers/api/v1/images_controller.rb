@@ -10,27 +10,39 @@ class Api::V1::ImagesController < ApplicationController
     end
 
     def create
-        # extracts file information
-        uploaded_io = params["image_io"]["base64"]
-        metadata = uploaded_io.split(',/')[0] + ","
-        filetype = metadata.split("/")[1].split("base64")[0][0...-1]
-        base64_string = uploaded_io[metadata.size..-1]
-        filename = "#{Time.new.to_i}.#{filetype}"
-        
-        # converts from base64 string to image file
-        blob = Base64.decode64(base64_string)
-        image = MiniMagick::Image.read(blob)
+        image = {}
+        filetype = ""
+        path = ""
+
+        if params["image"]["url"]
+            path = open(params["image"]["url"])
+            filetype = params["image"]["url"].split(".").last
+        else
+            # extracts file information 
+            uploaded_io = params["image_io"]["base64"]
+            metadata = uploaded_io.split(',/')[0] + ","
+            filetype = metadata.split("/")[1].split("base64")[0][0...-1]
+            base64_string = uploaded_io[metadata.size..-1]
+            
+            # converts from base64 string to image file
+            blob = Base64.decode64(base64_string)
+            image = MiniMagick::Image.read(blob)
+
+            path = image.tempfile.path
+        end
+
         
         # initializes google cloud storage session
         storage = Google::Cloud::Storage.new(
             project_id: ENV['GOOGLE_CLOUD_PROJECT'],
             credentials: JSON.parse(File.read('config/google_cloud_credentials.json'))
-        )
-        
+            )
+            
         # initializes google cloud storage bucket and uploads image
+        filename = "#{Time.new.to_i}.#{filetype}"
         bucket_name = "auto-stock-189103.appspot.com"
         bucket = storage.bucket bucket_name
-        gcs_image = bucket.create_file image.tempfile.path, filename
+        gcs_image = bucket.create_file path, filename
 
         # assigns public permission to file
         file = bucket.file filename
