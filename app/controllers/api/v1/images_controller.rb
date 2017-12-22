@@ -20,8 +20,8 @@ class Api::V1::ImagesController < ApplicationController
         else
             # extracts file information 
             uploaded_io = params["image_io"]["base64"]
-            metadata = uploaded_io.split(',/')[0] + ","
-            filetype = metadata.split("/")[1].split("base64")[0][0...-1]
+            filetype = uploaded_io.split("/")[1].split("\;")[0]
+            metadata = "data:image/" + filetype + "\;base64,"
             base64_string = uploaded_io[metadata.size..-1]
             
             # converts from base64 string to image file
