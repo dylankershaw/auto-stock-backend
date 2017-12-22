@@ -19,7 +19,7 @@ class Api::V1::ImagesController < ApplicationController
             path = open(params["image"]["url"])
             filetype = params["image"]["url"].split(".").last
         else
-            # extracts file information for computer uploads
+            # extracts file information for file uploads
             uploaded_io = params["image_io"]["base64"]
             filetype = uploaded_io.split("/")[1].split("\;")[0]
             metadata = "data:image/" + filetype + "\;base64,"
