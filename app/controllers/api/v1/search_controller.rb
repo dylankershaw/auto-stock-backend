@@ -1,7 +1,10 @@
 class Api::V1::SearchController < ApplicationController
     def show
+        # singularizes and downcases search term
+        search_term = params["term"].singularize.downcase
+
         # returns all images with given label
-        images = Label.find_by(name: params["term"].downcase).images
+        images = Label.find_by(name: search_term).images
         
         # writes relevancyScore for each image
         images.map do |image|

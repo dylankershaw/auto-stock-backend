@@ -48,3 +48,4 @@ gem 'unsplash'
 gem 'google-cloud-storage'
 gem "mini_magick"
 gem "google-cloud-vision"
+gem 'activesupport'
