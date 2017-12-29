@@ -1,9 +1,11 @@
 class Api::V1::UsersController < ApplicationController
+    # returns user with a given id
     def show
         user = User.find(params[:id])
         render json: user
     end
 
+    # creates user and returns jwt token
     def create
         user = User.new(username: params["username"].downcase, password: params["password"])
 

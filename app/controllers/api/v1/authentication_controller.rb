@@ -1,7 +1,10 @@
 class Api::V1::AuthenticationController < ApplicationController
 
   def create
+    # finds user
     user = User.find_by(username: params[:username].downcase)
+    
+    # authenticates user and returns jwt token
     if user && user.authenticate(params[:password])
         render json: {
         id: user.id,
@@ -14,8 +17,10 @@ class Api::V1::AuthenticationController < ApplicationController
   end
 
   def show
+    # decodes JWT token
     current_user = JWT.decode(params["token"], ENV['JWT_SECRET'], ENV['JWT_ALGORITHM'])
 
+    # returns user id and username
     if current_user
       render json: {
         id: current_user[0]["user_id"],

@@ -7,7 +7,7 @@ Rails.application.routes.draw do
       post '/search', to: "search#show"
       resources :users, only: [:show, :create]
       resources :image_labels, only: [:show, :create]
-      resources :images, only: [:show, :create]
+      resources :images, only: [:show, :create, :destroy]
       resources :labels, only: [:show, :create]
     end
   end

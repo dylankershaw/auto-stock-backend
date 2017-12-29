@@ -74,4 +74,10 @@ class Api::V1::ImagesController < ApplicationController
 
         render :json => new_image.to_json(:include => [:labels, :imageLabels, :user])
     end
+
+    def destroy
+        image = Image.find(params[:id])
+        image.delete
+        render json: { message: "deleted" }, status: :ok
+    end
 end
