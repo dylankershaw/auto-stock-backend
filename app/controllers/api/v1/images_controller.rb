@@ -64,7 +64,7 @@ class Api::V1::ImagesController < ApplicationController
 
         # associates labels with image
         gcv_image.labels.each do |gcv_label|
-            label = Label.find_or_create_by(name: gcv_label.description)
+            label = Label.find_or_create_by(name: gcv_label.description.singularize.downcase)
             image_label = ImageLabel.create(
                 image_id: new_image.id,
                 label_id: label.id,
