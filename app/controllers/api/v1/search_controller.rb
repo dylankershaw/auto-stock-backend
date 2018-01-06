@@ -8,7 +8,8 @@ class Api::V1::SearchController < ApplicationController
         
         # writes relevancyScore for each image
         images.map do |image|
-            image.score = image.imageLabels.find_by(image_id: image.id).relevancyScore
+            label = Label.find_by(name: params["search"]["term"])
+            image.score = image.imageLabels.find_by(label_id: label.id).relevancyScore
         end
 
         render json: images, methods: [:score]
